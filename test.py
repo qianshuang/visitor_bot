@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import re
+import pandas as pd
 
-text = "JGood is a handsome boy, he is cool, clever, and so on..."
-print(re.sub(r'\s+', '-', text))
+df = pd.DataFrame([[1, 1], [2, 2], [3, 3]], columns=["trie_res", "frequency", "recents"])
+print(df)
