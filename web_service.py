@@ -18,14 +18,14 @@ def trie_search():
     }
     """
     resq_data = json.loads(request.get_data())
-    data = resq_data["data"]
+    data = resq_data["data"].strip()
     size = int(resq_data["size"]) if "size" in resq_data else default_size
 
     # 1. 原句trie
     trie_res = smart_hint(data)
     # 2. 标点最后1句trie
     if len(trie_res) == 0:
-        trie_res = smart_hint(data.split(",")[-1])
+        trie_res = smart_hint(re.split(r'[,|.]', data)[-1])
 
     priorities_res = priorities
     ranked_trie_res = rank(list(set(trie_res) - set(priorities_res)))
@@ -41,7 +41,7 @@ def callback():
         }
     """
     resq_data = json.loads(request.get_data())
-    data = resq_data["data"]
+    data = resq_data["data"].strip()
 
     # 回写recent文件
     # global recents

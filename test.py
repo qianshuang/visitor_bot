@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import pandas as pd
+import re
 
-df = pd.DataFrame([[1, 1], [2, 2], [3, 3]], columns=["trie_res", "frequency", "recents"])
-print(df)
+data = "Hello, I am Adam. How can I change password"
+print(re.split(r'[,|.]', data)[-1])
