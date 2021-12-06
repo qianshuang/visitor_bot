@@ -28,7 +28,6 @@ def smart_hint(query):
         pre_corr_query = " ".join([correction(w) for w in pres])
         result = trie.keys(pre_corr_query + " " + last)
         if len(result) == 0:
-            lc = correction(last)
             corr_query = pre_corr_query + " " + correction(last)
             result = trie.keys(corr_query)
 
