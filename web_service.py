@@ -62,7 +62,7 @@ def callback():
 
 
 def exit_handler():
-    print('Flask is exiting, starting writing resource files')
+    print('Flask is exiting, starting writing resource files...')
     write_lines(RECENT_FILE, recents)
     open_file(FREQUENCY_FILE, mode='w').write(json.dumps(frequency, ensure_ascii=False))
 
