@@ -14,9 +14,16 @@ app = Flask(__name__)
 @app.route('/trie_search', methods=['GET', 'POST'])
 def trie_search():
     """
+    input json:
     {
         "data": "xxxxxx",  # 用户query
         "size": 10         # 最大返回大小
+    }
+
+    return:
+    {   'code': 0,
+        'msg': 'success',
+        'data': []
     }
     """
     resq_data = json.loads(request.get_data())
