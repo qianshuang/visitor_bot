@@ -6,6 +6,8 @@ from gevent import pywsgi
 
 from helper import *
 
+import atexit
+
 app = Flask(__name__)
 
 
@@ -48,16 +50,24 @@ def callback():
     if data in recents:
         recents.remove(data)
     recents.insert(0, data)
-    write_lines(RECENT_FILE, recents)
+    # write_lines(RECENT_FILE, recents)
 
     # 回写frequency文件
     frequency.setdefault(data, 0)
     frequency[data] = frequency[data] + 1
-    open_file(FREQUENCY_FILE, mode='w').write(json.dumps(frequency, ensure_ascii=False))
+    # open_file(FREQUENCY_FILE, mode='w').write(json.dumps(frequency, ensure_ascii=False))
 
     result = {'code': 0, 'msg': 'success', 'data': data}
     return jsonify(result)
 
+
+def exit_handler():
+    print('Flask is exiting, starting writing resource files')
+    write_lines(RECENT_FILE, recents)
+    open_file(FREQUENCY_FILE, mode='w').write(json.dumps(frequency, ensure_ascii=False))
+
+
+atexit.register(exit_handler)
 
 if __name__ == '__main__':
     server = pywsgi.WSGIServer(('0.0.0.0', 8088), app)

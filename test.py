@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import re
+import atexit
 
-data = "Hello, I am Adam. How can I change password"
-print(re.split(r'[,|.]', data)[-1])
+
+def exit_handler():
+    print('My application is ending!')
+
+
+atexit.register(exit_handler)
