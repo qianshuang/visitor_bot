@@ -6,3 +6,6 @@
 6. 支持频率优先级。
 7. 支持most recently优先级。
 8. 支持自定义常驻前置suggestion。
+
+
+注：高并发时，采用gunicorn服务启动及部署方式，本web_service不支持高并发。
