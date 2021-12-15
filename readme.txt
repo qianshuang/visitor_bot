@@ -9,3 +9,4 @@
 
 
 注：高并发时，采用gunicorn服务启动及部署方式，本web_service不支持高并发。
+gunicorn -w 5 -k gevent -b 0.0.0.0:8088 web_service:app

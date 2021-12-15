@@ -7,6 +7,7 @@ import os
 import json
 import re
 from collections import Counter
+import threading
 
 from common import *
 
@@ -49,6 +50,15 @@ def run():
 
 
 schedule.every().hour.do(run)
+
+
+# 多线程调度
+def run_schedule():
+    while True:
+        schedule.run_pending()
+
+
+threading.Thread(target=run_schedule).start()
 
 # 读取recent文件，越top优先级越高
 RECENT_FILE = "data/recent.txt"
