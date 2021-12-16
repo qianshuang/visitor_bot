@@ -6,7 +6,6 @@ import schedule
 import hashlib
 import os
 import json
-import re
 from collections import Counter
 import threading
 
@@ -19,7 +18,7 @@ default_size = 10
 INTENT_FILE = "data/intents.txt"
 md5_intent_ori = hashlib.md5(open(INTENT_FILE).read().encode("utf-8")).hexdigest()
 # 构建原始标准问映射
-intents_lower_dict = {intent.lower(): intent for intent in read_file(INTENT_FILE)}
+intents_lower_dict = {pre_process(intent): intent for intent in read_file(INTENT_FILE)}
 # 构建Trie树
 trie = marisa_trie.Trie(list(intents_lower_dict.keys()))
 print("intents trie finished building...")
@@ -53,6 +52,17 @@ def run():
 schedule.every().hour.do(run)
 
 
+# 每天写入资源文件
+def run_resources():
+    print('starting writing resource files...')
+    write_lines(RECENT_FILE, recents)
+    open_file(FREQUENCY_FILE, mode='w').write(json.dumps(frequency, ensure_ascii=False))
+    open_file(CORRECTION_FILE, mode='w').write(json.dumps(corrections, ensure_ascii=False))
+
+
+schedule.every().day.do(run_resources)
+
+
 # 多线程调度
 def run_schedule():
     while True:
@@ -79,6 +89,15 @@ else:
         frequency = json.load(f)
 print("frequency file finished loading...")
 
+# 读取纠错表文件
+CORRECTION_FILE = "data/correction.json"
+if not os.path.exists(CORRECTION_FILE):
+    corrections = {}
+else:
+    with open(CORRECTION_FILE, encoding="utf-8") as f:
+        corrections = json.load(f)
+print("correction file finished loading...")
+
 
 # 单词纠错
 def words(text):
@@ -95,6 +114,8 @@ def P(word, N=sum(WORDS.values())):
 
 
 def correction(word):
+    if word in corrections:
+        return corrections[word]
     """Most probable spelling correction for word."""
     return max(candidates(word), key=P)
 

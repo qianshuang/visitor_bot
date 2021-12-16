@@ -6,7 +6,7 @@ from gevent import pywsgi
 
 from helper import *
 
-import atexit
+# import atexit
 
 app = Flask(__name__)
 
@@ -46,35 +46,47 @@ def trie_search():
 def callback():
     """
         {
-            "data": "xxxxxx"  # 用户query
+            "query": "xxxxxx"  # 用户query
+            "intent": "xxxxxx"  # 匹配到的标准答案
         }
     """
     resq_data = json.loads(request.get_data())
-    data = resq_data["data"].strip()
+    query = resq_data["query"]
+    intent = resq_data["intent"].strip()
 
     # 回写recent文件
     # global recents
-    if data in recents:
-        recents.remove(data)
-    recents.insert(0, data)
+    if intent in recents:
+        recents.remove(intent)
+    recents.insert(0, intent)
     # write_lines(RECENT_FILE, recents)
 
     # 回写frequency文件
-    frequency.setdefault(data, 0)
-    frequency[data] = frequency[data] + 1
+    frequency.setdefault(intent, 0)
+    frequency[intent] = frequency[intent] + 1
     # open_file(FREQUENCY_FILE, mode='w').write(json.dumps(frequency, ensure_ascii=False))
 
-    result = {'code': 0, 'msg': 'success', 'data': data}
+    # 回写纠错表
+    query = pre_process(query)
+    intent = pre_process(intent)
+    if len(trie.keys(query)) > 0:
+        peak_wrong_word(query, intent)
+    else:
+        query_ = re.split(r'[,|.]', query)[-1]
+        peak_wrong_word(query_, intent)
+
+    result = {'code': 0, 'msg': 'success', 'data': resq_data}
     return jsonify(result)
 
 
-def exit_handler():
-    print('Flask is exiting, starting writing resource files...')
-    write_lines(RECENT_FILE, recents)
-    open_file(FREQUENCY_FILE, mode='w').write(json.dumps(frequency, ensure_ascii=False))
-
-
-atexit.register(exit_handler)
+# def exit_handler():
+#     print('Flask is exiting, starting writing resource files...')
+#     write_lines(RECENT_FILE, recents)
+#     open_file(FREQUENCY_FILE, mode='w').write(json.dumps(frequency, ensure_ascii=False))
+#     open_file(CORRECTION_FILE, mode='w').write(json.dumps(corrections, ensure_ascii=False))
+#
+#
+# atexit.register(exit_handler)
 
 if __name__ == '__main__':
     server = pywsgi.WSGIServer(('0.0.0.0', 8088), app)

@@ -1,22 +1,19 @@
 # -*- coding: utf-8 -*-
 
-import string
 import pandas as pd
-
 from config import *
 
 
+def peak_wrong_word(query, intent):
+    query_words = query.split(" ")
+    intent_words = intent.split(" ")
+    for i in range(len(query_words)):
+        if query_words[i] != intent_words[i] and query_words[i] != "":
+            corrections[query_words[i]] = intent_words[i]
+
+
 def smart_hint(query):
-    # 1. 转小写
-    query = query.lower()
-
-    # 2. 去标点
-    for c in string.punctuation:
-        query = query.replace(c, "")
-
-    # 3. 合并空格
-    query = re.sub(r'\s+', ' ', query)
-
+    query = pre_process(query)
     # 4. 前缀匹配
     result = trie.keys(query)
 
