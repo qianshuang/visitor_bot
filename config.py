@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import time
 
 import marisa_trie
 import schedule
@@ -56,6 +57,7 @@ schedule.every().hour.do(run)
 def run_schedule():
     while True:
         schedule.run_pending()
+        time.sleep(1)
 
 
 threading.Thread(target=run_schedule).start()
