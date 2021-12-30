@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import Levenshtein
 import pandas as pd
 from config import *
 
@@ -48,3 +49,14 @@ def rank(trie_res):
     df = pd.DataFrame({"trie_res": trie_res, "frequency": frequency_, "recents": recents_})
     df.sort_values(by=["frequency", "recents"], ascending=False, inplace=True)
     return df["trie_res"].values.tolist()
+
+
+def leven(query):
+    res = []
+    for k, v in intents_lower_dict.items():
+        score = Levenshtein.ratio(k[:len(query)], query)
+        if score >= 0.8:
+            # res.append((score, v))
+            res.append(v)
+    # return sorted(res, reverse=True)
+    return res

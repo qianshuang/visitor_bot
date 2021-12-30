@@ -34,7 +34,10 @@ def trie_search():
     trie_res = smart_hint(data)
     # 2. 标点最后1句trie
     if len(trie_res) == 0:
-        trie_res = smart_hint(re.split(r'[,|.]', data)[-1])
+        trie_res = smart_hint(re.split(r'[,|.]', data)[-1].strip())
+    # 3. 编辑距离
+    if len(trie_res) == 0:
+        trie_res = leven(data)
 
     priorities_res = priorities
     ranked_trie_res = rank(list(set(trie_res) - set(priorities_res)))
