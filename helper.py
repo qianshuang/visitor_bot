@@ -8,8 +8,8 @@ from config import *
 def peak_wrong_word(query, intent):
     query_words = query.split(" ")
     intent_words = intent.split(" ")
-    for i in range(len(query_words)):
-        if query_words[i] != intent_words[i] and query_words[i] != "":
+    for i in range(len(query_words) - 1):
+        if query_words[i] != intent_words[i]:
             corrections[query_words[i]] = intent_words[i]
 
 
